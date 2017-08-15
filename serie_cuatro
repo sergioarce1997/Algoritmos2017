@@ -7,13 +7,14 @@ using namespace std;
 
 void main()
 {int S=0, N, i;
-  do{
-     cout<<"Ingresar N:";
-     cin>> N;
-    }while (N<=0);
-  for(i=1; i<=N; i=i+4)
-	  S=S+i;
-	  cout<<"La suma es:"<<S;
+ do{
+    cout<<"Ingresar N:";
+    cin>> N;
+   }
+ while (N<=0);
+ for(i=1; i<=N; i=i+4)
+     S=S+i;
+     cout<<"La suma es:"<<S;
  getch();
 }
 
