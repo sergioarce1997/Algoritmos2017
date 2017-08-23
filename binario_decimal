@@ -1,0 +1,37 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "math.h"
+
+using namespace std;
+
+int digitos (int n);
+int binarioDecimal (int n);
+
+void main ()
+    { int n, dec;
+      cout<<"Ingrese el numero binario: ";
+	  cin>> n;
+	  dec = binarioDecimal (n);
+	  cout<< "El numero binario: "<<n << "En el sistema decimal es: " <<dec;
+	  getch ();
+    }
+
+
+int digitos (int n)
+   { int c=0;
+     while (n!=0)
+	      { c++;
+	        n=n/10;
+	      }
+	 return c;
+   }
+
+int binarioDecimal (int n)
+   { int dig= digitos(n), res=0;
+     for (int i=0; i<dig; i++)
+	    { res= res + n%10 * pow(2,i);
+	      n= n/10;
+	    }
+	 return res;
+   }
