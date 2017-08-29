@@ -1,0 +1,120 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include "stdlib.h"
+#define MAX 100
+
+using namespace std;
+
+float area (float a, float b);
+void vector ();
+string invertir (string var2);
+void burbuja (int vec[], int n);
+void intercambiar (int vec1[]; int vec2[]; int vec3[]; int n1; int n2; int n3); 
+
+void main ()
+    { float base, altura, AreaPar;
+      float Vec[MAX];
+	  int N, opcion;
+	  string cadena;
+	  // Menu
+	  do
+	    {
+	     cout<< "\t Menu" <<endl;
+	     cout<< "\t ====" <<endl;
+		 cout<< "1. Calculo de Area"<<endl;
+		 cout<< "2. Vector"<<endl;
+		 cout<< "3. invertir cadena"<<endl;
+		 cout<< "0. Salir"<<endl;
+		 cout<< "Ingrese Opcion: ";
+		 cin>> opcion;
+		 switch (opcion)
+		      {
+		       case 1:
+                   {
+					cout<<"introdusca base"<<endl;
+		            cin>>base;
+		            cout<<"introdusca altura"<<endl;
+		            cin>>altura;
+		            AreaPar=area(base, altura);
+		            cout<<"el area del paralelogramo es:"<< AreaPar<<endl;
+		            break;
+				   }
+			   case 2:
+				   { 
+					cout<< "Aqui va lo que sea";
+				    break;
+				   }
+			   case 3:
+				   { 
+					cout<< "Ingrese cadena" <<endl;
+					cin.ignore();
+				    getline (cin, cadena);
+					cout<< "La cadena invertida es: "<< invertir(cadena)<<endl;
+					cin.ignore();
+					break;
+				   }
+			   case 0:
+				   {
+					cout<<"Salir del Menu";
+				    break;
+				   }
+			   default: cout<<"Opcion invalida, ingrese otra opcion";
+	          }
+		      getch();
+	    system ("cls");
+	   }while (opcion!=0); 
+     getch();
+    }
+
+float area (float a, float b)
+	 {
+	  float x;
+      x=a*b;
+	  return x;
+     }
+
+string invertir (string var3)
+      {
+	   int lng; 
+       char aux;
+	   string var2=var3;
+       lng=var2.length();
+	   for (int i=0; i<lng/2; i++)
+	      {
+		   aux=var2.at(i);
+	       var2[i]=var2[lng-1-i];
+		   var2[lng-1-i]= aux;
+	      }
+	   return  var2;
+     }
+
+void burbuja (int vec[], int n)
+   {
+	 for(int i=0; i<n-1; i++)
+		 for(int j=i+1; j<n; j++)
+		    { 
+			  int aux;
+			  aux=vec[i];
+			  vec[i]=vec[j];
+			  vec[j]=aux;
+		    }
+   }
+
+void intercambiar (int vec1[], int vec2[], int vec3[], int n1, int n2, int n3) 
+    { 
+	  int i=0, j=0, k=0;
+	  while ((i<n1)&&(j<n2))
+	       { 
+			   if (vec1[i]<vec2[j])
+			     { 
+				   vec3[k]=vec1[i];
+				   i++;
+			       k++;
+			     }
+			   else
+			     {
+                   vec3[k]=vec1[i];
+				   i++;
+			       k++;
