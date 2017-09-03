@@ -1,0 +1,44 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#define MAX 100
+
+using namespace std;
+
+void cargar_vector (float vec[], int n);
+void invertir_vector (float vec[], int n);
+
+void main ()
+{int n; 
+float vec[MAX];
+cout<< "Ingrese el tamano del vetor: ";
+cin>> n;
+cargar_vector (vec, n);
+invertir_vector (vec, n);
+getch();
+}
+
+
+void cargar_vector (float vec[], int n)
+{
+ for (int i=0; i<n; i++)
+ {cout<<"A["<<i<<"]= ";
+  cin>> vec[i];
+ }
+}
+
+
+void invertir_vector (float vec[], int n)
+{float aux;
+  for(int i=0; i<n/2; i++)
+    {
+      aux=vec[i];
+      vec[i]=vec[n-1-i];
+      vec[n-1-i]=aux;
+    }
+for (int i=0, j=0; i<n, j<n; i++, j++)
+    {
+	 cout<<"El vector inverido es: ";
+     cout<<"B["<<j<<"]= "<<vec[i]<<"\n";
+    }
+}
