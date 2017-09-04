@@ -1,0 +1,26 @@
+#include "stdafx.h"
+#include <iostream>
+#include"conio.h"
+#include <string>
+
+using namespace std;
+
+void apellido_nombre (string nombre);
+
+void main()
+  {string var1;
+   cout<<"Ingrese el Nombre y  luego el Apellido: ";
+   getline (cin, var1);
+   apellido_nombre(var1);
+   getch ();
+  }
+
+void apellido_nombre (string var1)
+{string var2, var3;
+int lon, a;
+lon=var1.length();
+a=var1.find(" ");
+var2=var1.substr(0, a);
+var3=var1.substr(a+1, lon);
+cout<<"El apellido seguido del nombre es: "<<var3<<" "<<var2;
+}
