@@ -1,0 +1,64 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#define MAX 10
+
+using namespace std;
+
+void cargar_matriz (int m[MAX][MAX],int F, int C);
+void m_traspuesta (int m[MAX][MAX],int F, int C);
+void mostrar_matriz (int m[MAX][MAX],int F, int C);
+
+void main()
+{int F, C,m[MAX][MAX];
+  do{cout<<"Ingrese el numero de filas: ";
+     cin>>F;
+    }while ((F>MAX) || (F<0));
+  do{cout<<"Ingrese el numero de columnas: ";
+     cin>>C;
+    }while ((C>MAX) || (C<0));
+   
+     cargar_matriz(m,F,C);
+	 cout<<"matriz normal"<<endl;
+	 mostrar_matriz (m,F,C);
+	 m_traspuesta (m,F,C);
+	  cout<<"matriz transpuesta";
+	 mostrar_matriz (m,F,C);
+
+	 getch();
+}
+
+void cargar_matriz (int m[MAX][MAX],int F, int C)
+{int  i, j;
+	for ( i=0; i<F; i++)
+	{for (j=0; j<C; j++)
+	   {cout<<"Ingrese el valor para la casilla["<<i<<"]["<<j<<"]";
+	    cin>>m[i][j];
+	   }
+	}
+} 
+
+void m_traspuesta (int m[MAX][MAX],int F, int C)
+{ int i,j, aux;
+
+for(i=0; i<F-1; i++)
+	   {for(j=i+1; j<C; j++)
+	      {
+			if(j>i)
+			{
+			aux=m[i][j];
+			m[i][j]=m[j][i];
+			m[j][i]= aux;
+			}
+		  }
+	   }
+}
+void mostrar_matriz (int m[MAX][MAX],int F, int C)
+{int i, j;
+for ( i=0; i<F; i++)
+	{for (j=0; j<C; j++)
+	   {cout<<"m["<<i<<"]["<<j<<"]= ";
+	    cout<<m[i][j];
+	   }
+	}
+}
