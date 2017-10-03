@@ -1,0 +1,163 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include <string>
+#define MAX 6
+
+using namespace std;
+
+struct tintereses
+{int numero;
+ string interes;
+ string descripcion;
+ int estado;
+};
+
+tintereses V[MAX];
+
+int insertar();
+void listar(int N);
+void consultar(int N);
+void modificar(int N);
+void borrar(int N);
+void clasificar();
+
+void main()
+{int N, opc;
+do{ 
+  cout<<"\n MENU ";
+  cout<<"\n [1]---> Insertar";
+  cout<<"\n [2]---> Listar";
+  cout<<"\n [3]---> Consultar";
+  cout<<"\n [4]---> Modificar";
+  cout<<"\n [5]---> Borrar";
+  cout<<"\n [6]---> Clasificar los datos";
+  cout<<"\n [0]---> Salir";
+  cout<<"Ingrese la opcion: ";
+  cin>>opc;
+  switch(opc)
+  {	case 1:N=insertar();
+         break;
+	case 2:listar(N);
+	     break;
+	case 3:consultar(N);
+	     break;
+	case 4:modificar(N);
+	     break;
+	case 5:borrar(N);
+	     break;
+	case 6:clasificar();
+	     break;
+	case 0:cout<<"salir";
+	     break;
+	default:cout<<"error";
+	     break;
+  }
+ }while(opc!=0);
+getch();
+}
+
+int insertar()
+{	int N;
+	cout<<" Ingrese el numero de datos que desee insertar: ";
+	cin>>N;
+	for(int i=0;i<N;i++)
+	{	cout<<"Ingrese el ID: "<<endl;
+		cin>>V[i].numero;
+		cout<<"Ingrese el interes: "<<endl;
+		cin.ignore();
+		getline(cin,V[i].interes);
+		cout<<"Ingrese la descripcion: "<<endl;
+		getline(cin,V[i].descripcion);
+		V[i].estado = 0;
+		getch();
+	}
+	return N;
+}
+
+
+
+
+void listar(int N)
+{
+	cout<<" Listado"<<endl;
+	cout<<"ID"<<"\t ";
+	cout<<"Interes"<<"\t";
+	cout<<"Descripcion"<<"\t"<<endl;
+	for(int i=0;i<N;i++)
+	{	if (V[i].estado!=9)
+	  {
+		cout<<V[i].numero<<"\t";
+		cout<<V[i].interes<<"\t";
+		cout<<V[i].descripcion<<i<<"\t";
+	  }
+	}
+}
+
+
+
+
+void consultar(int N)
+{int elemento, band=0;
+  cout<<"Ingrese elemento que quiere consultar: ";
+  cin>> elemento;
+  for(int i=0; i<N; i++) 
+    { if (elemento==V[i].numero)
+         {
+		  cout<<"Interes: "<<V[i].interes<<"\t"<<endl;
+		  cout<<"Descripcion: "<<V[i].descripcion<<"\t"<<endl;
+		  band=1;
+         }
+    }
+      if (band==0)
+	    cout<<"Elemento ingresado no encontrado";
+ }
+   
+
+void modificar(int N)
+	{int elemento, band=0, opc;
+  cout<<"Ingrese elemento que quiere modificar: ";
+  cin>> elemento;
+  for(int i=0; i<N; i++) 
+    { if (elemento==V[i].numero)
+         {
+		  cout<<"Interes: "<<V[i].interes<<"\t"<<endl;
+		  cout<<"Desea modificar el dato: (presione 0)"<<endl;
+		  cin>> opc;
+		  if(opc==0)
+		  {cin.ignore();
+		   cout<<"Ingrese nuevo Dato: "<<endl;
+		   getline(cin, V[i].interes);
+		  }
+		  cout<<"Descripcion: "<<V[i].descripcion<<"\t"<<endl;
+		  cout<<"Desea modificar el dato: (presione 0)"<<endl;
+		  cin>> opc;
+		   if(opc==0)
+		  {cin.ignore();
+		   cout<<"Ingrese nuevo Dato: "<<endl;
+		   getline(cin, V[i].descripcion);
+		  }
+		  band=1;
+         }
+    }
+      if (band==0)
+	    cout<<"Elemento ingresado no encontrado";
+ }
+
+void borrar(int N)
+{int elemento, band=0;
+  cout<<"Ingrese elemento que quiere borrar: ";
+  cin>> elemento;
+  for(int i=0; i<N; i++) 
+    { if (elemento==V[i].numero)
+         {
+		  V[i].estado=9;
+		  band=1;
+         }
+    }
+      if (band==0)
+	    cout<<"Elemento ingresado no encontrado";
+ }
+void clasificar()
+{
+}
