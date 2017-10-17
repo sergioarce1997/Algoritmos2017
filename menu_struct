@@ -20,7 +20,7 @@ void listar(int N);
 void consultar(int N);
 void modificar(int N);
 void borrar(int N);
-void clasificar();
+void clasificar(int N);
 
 void main()
 {int N, opc;
@@ -46,7 +46,7 @@ do{
 	     break;
 	case 5:borrar(N);
 	     break;
-	case 6:clasificar();
+	case 6:clasificar(N);
 	     break;
 	case 0:cout<<"salir";
 	     break;
@@ -158,6 +158,15 @@ void borrar(int N)
       if (band==0)
 	    cout<<"Elemento ingresado no encontrado";
  }
-void clasificar()
+void clasificar(int N)
 {
+	tintereses aux;
+	for (int i=0; i<N-1; i++)
+	    for (int j=i+1; j<N; j++)
+			if (V[i].numero>V[j].numero)
+			{aux=V[j];
+             V[j]=V[i];
+			 V[i]=aux;
+	        }  
+		
 }
