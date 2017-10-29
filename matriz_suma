@@ -1,0 +1,57 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+
+using namespace std;
+
+#define MAX 100
+
+void cargarMatrices(int mat[MAX][MAX], int fil, int col);
+void sumarMatrices(int A[MAX][MAX], int B[MAX][MAX], int fil, int col);
+
+void main()
+{ int A[MAX][MAX], B[MAX][MAX], fil, col;
+ 
+  cout<<"\n\n Ingrese la cantidad de filas de las matrices : ";
+  cin>>fil;
+  cout<<"\n\n Ingrese la cantidad de columnas de las matrices : ";
+  cin>>col;
+
+  cargarMatrices(A, fil, col);
+  cargarMatrices(B, fil, col);
+
+  sumarMatrices(A, B, fil, col);
+
+  getch();
+}
+
+
+
+
+void cargarMatrices(int mat[MAX][MAX], int fil, int col)
+{int i, j;
+
+ cout<<"\n\n\n ----------Ingrese los valores de la matriz---------- ";
+
+ for(i = 0; i < fil; i++)
+{for(j = 0; j < col; j++)
+{cout<<"\n\n Mat ["<<i<<"]["<<j<<"] : ";
+cin>>mat[i][j];
+}
+}
+}
+
+
+
+
+void sumarMatrices(int A[MAX][MAX], int B[MAX][MAX], int fil, int col)
+{int i, j, C[MAX][MAX];
+
+ cout<<"\n\n ---------- Resultado de la suma ----------";
+ for(i = 0; i < fil; i++)
+{for(j = 0; j < col; j++)
+{C[i][j] = A[i][j] + B[i][j];
+cout<<"\n\n Matriz C["<<i<<"]["<<j<<"] : "<<C[i][j];
+}
+}
+}
