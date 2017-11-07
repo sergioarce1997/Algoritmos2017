@@ -1,0 +1,169 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include "stdlib.h"
+
+using namespace std;
+void ALTA_SECUENCIAL();
+void LISTADO_SECUENCIAL();
+void MODIFICACION_SECUENCIAL(); 
+void CONSULTA_SECUENCIAL();
+void BAJA_LOGICA_SECUENCIAL();
+
+struct tipo_trabajador{
+	int no_trab;
+	string ocupacion;
+	int ci;
+	string descripcion;
+	string direccion;
+	char aceptar;
+};
+
+tipo_trabajador Registro;
+FILE *alias;
+
+void main()
+{
+	int op;
+	do
+	{
+		cout<<"              MENU          "<<endl;
+		cout<<"(1) Adicionar-Insertar"<<endl;
+		cout<<"(2) Listado"<<endl;
+		cout<<"(3) Modificacion"<<endl;
+		cout<<"(4) Consulta"<<endl;
+		cout<<"(5) Borrado"<<endl;
+		cout<<"(0) Salir"<<endl;
+		cout<<endl;
+		cout<<"Ingrese la opcion que desea: ";
+		cin>>op;
+		switch(op)
+		{
+		case 1:
+			{
+				ALTA_SECUENCIAL();
+				break;
+			}
+		case 2:
+			{
+				LISTADO_SECUENCIAL();
+				break;
+			}
+		case 3:
+			{
+				MODIFICACION_SECUENCIAL();
+				break;
+			}
+		case 4:
+			{
+				CONSULTA_SECUENCIAL();
+				break;
+			}
+		case 5:
+			{
+				BAJA_LOGICA_SECUENCIAL();
+				break;
+			}
+		case 0:
+			{
+				cout<<"Salir";
+				break;
+			}
+		default:
+			{
+			}
+		}
+		cout<<endl;
+	}while(op!=0);
+	
+	getch();
+
+}
+
+void ALTA_SECUENCIAL() 
+{ 
+	
+  int no_trab;  // Variable local para el numero de producto 
+ 
+  cout << "\n\rALTAS DE REGISTROS DE TRABAJADORES"; 
+  alias=fopen("TRABAJADOR.SEC","rb+"); // Intenta abrir el archivo  
+                                     // en modo de lectura/escritura 
+  if(alias==NULL) 
+    alias=fopen("TRABAJADOR.SEC","wb"); // Crea el archivo en caso de no 
+                                      // existir 
+  cout << "\n\n\n\rNumero de trabajador: "; cin >> no_trab; 
+  fread(&Registro,sizeof(Registro),1,alias); 
+  // Lee el "Registro", de tamano=sizeof(Registro) del archivo "alias" 
+  while(!feof(alias)) // Ciclo mientras no se encuentre el final del 
+                      // archivo 
+  { 
+    if(Registro.no_trab==no_trab) 
+    { 
+       cout << "\n\n\n\rRegistro duplicado !!!"; 
+       fclose(alias); 
+       getch(); 
+       return; 
+    } 
+    fread(&Registro,sizeof(Registro),1,alias); 
+  } 
+  cin.ignore();
+  cout << "\n\rOcupacion: ";
+  getline(cin,Registro.ocupacion); 
+  cout << "\n\rNumero de CI   : "; 
+  cin >> Registro.ci; 
+  cout << "\n\rDescripcion    : "; 
+  cin.ignore();
+  getline(cin,Registro.descripcion);
+  cout << "\n\rDireccion   : ";
+  getline(cin,Registro.direccion);
+  do 
+  { 
+    cout << "\n\rAceptar   : "; Registro.aceptar=toupper(getche()); 
+  }while(Registro.aceptar!='S' && Registro.aceptar!='N'); 
+  Registro.no_trab=no_trab; 
+  fwrite(&Registro,sizeof(Registro),1,alias); // Grabar el Registro  
+  fclose(alias); // Cierra el archivo 
+  cout << "\n\n\n\rTrabajador Registrado !!!"; 
+  cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+  getch(); 
+  return; 
+} 
+
+void LISTADO_SECUENCIAL()
+{
+  cout << "\n\rLISTADO DE REGISTROS TRABAJADORES"; 
+  alias=fopen("TRABAJADOR.SEC","rb"); // Intenta abrir el archivo PRODUCTO.SEC
+                             // en modo de solo lectura 
+  if(alias==NULL) 
+  { 
+    cout << "\n\n\n\rNo existe el archivo !!!"; 
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+    getch(); 
+    return; 
+  } 
+  cout<< "\n\rNo TRABAJADOR       OCUPACION      NEMERO DE CI       DESCRIPCION        DIRECCION          ACEPTAR"<<endl; 
+  cout << "\n\r---------------------------------------------------------"<<endl; 
+  fread(&Registro,sizeof(Registro),1,alias); 
+     // Lee el "Registro", de tamano=sizeof(Registro) del archivo "alias"
+  while(!feof(alias)) // Ciclo mientras no se encuentre el final del archivo 
+  { 
+cout<<Registro.no_trab<<"\t""\t"<<Registro.ocupacion<<"\t""\t"<<Registro.ci<<"\t""\t"<<Registro.descripcion<<"\t""\t"<<Registro.direccion<<"\t""\t"<<Registro.aceptar<<endl; 
+    fread(&Registro,sizeof(Registro),1,alias); 
+  } 
+  fclose(alias); // Cierra el archivo 
+ cout << "\n\r---------------------------------------------------------"; 
+  cout << "\n\rFin del listado !!!"; 
+  cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+  getch(); 
+return; 
+}
+void MODIFICACION_SECUENCIAL()
+{
+}
+void CONSULTA_SECUENCIAL()
+{
+}
+void BAJA_LOGICA_SECUENCIAL()
+{
+}
