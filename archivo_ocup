@@ -1,0 +1,238 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include "stdlib.h"
+
+using namespace std;     
+void ALTA_SECUENCIAL();
+void LISTADO_SECUENCIAL();
+void MODIFICACION_SECUENCIAL(); 
+void CONSULTA_SECUENCIAL();
+void BAJA_LOGICA_SECUENCIAL();
+
+struct tipo_ocupacion{
+	int no_ocup;
+	string ocup;
+	string descrip;
+	char aceptar;
+};
+
+tipo_ocupacion Registro;
+FILE *alias;
+
+void main()
+{
+	int op;
+	do
+	{
+		cout<<"              MENU          "<<endl;
+		cout<<"(1) Adicionar-Insertar"<<endl;
+		cout<<"(2) Listado"<<endl;
+		cout<<"(3) Modificacion"<<endl;
+		cout<<"(4) Consulta"<<endl;
+		cout<<"(5) Borrado"<<endl;
+		cout<<"(0) Salir"<<endl;
+		cout<<endl;
+		cout<<"Ingrese la opcion que desea: ";
+		cin>>op;
+		switch(op)
+		{
+		case 1:
+			{
+				ALTA_SECUENCIAL();
+				break;
+			}
+		case 2:
+			{
+				LISTADO_SECUENCIAL();
+				break;
+			}
+		case 3:
+			{
+				MODIFICACION_SECUENCIAL();
+				break;
+			}
+		case 4:
+			{
+				CONSULTA_SECUENCIAL();
+				break;
+			}
+		case 5:
+			{
+				BAJA_LOGICA_SECUENCIAL();
+				break;
+			}
+		case 0:
+			{
+				cout<<"Salir";
+				break;
+			}
+		default:
+			{
+			}
+		}
+		cout<<endl;
+	}while(op!=0);
+	
+	getch();
+
+}
+
+void ALTA_SECUENCIAL() 
+{ 
+	int no_ocup;
+
+	cout << "\n\rALTAS DE REGISTROS DE OCUPACIONES"; 
+	alias=fopen("ocupacion.sec","rb+");
+
+	if (alias==NULL)
+	alias=fopen("ocupacion.sec","wb");
+
+	cout<< "\n\n Ingrese el numero de ocupacion: ";
+	cin>> no_ocup;
+    fread(&Registro,sizeof(Registro),1,alias);
+	while(!feof(alias))
+	   {if(Registro.no_ocup==no_ocup)
+	      {cout<<"\n\n Registro duplicado";
+	       fclose(alias);
+		   getch();
+		   return;
+	      }
+	    fread(&Registro,sizeof(Registro),1,alias);
+	   }
+	cin.ignore();
+	cout<<"\n\r Ocupacion: ";
+	getline(cin,Registro.ocup);
+	cout<<"\n\r Descripcion: ";
+	cin.ignore();
+	getline(cin,Registro.descrip);
+
+	do 
+      {  
+       cout << "\n\rAceptar   : "; Registro.aceptar=toupper(getche()); 
+      }while(Registro.aceptar!='S' && Registro.aceptar!='N'); 
+
+	   Registro.no_ocup=no_ocup;
+	   fwrite(&Registro,sizeof(Registro),1,alias);
+	   fclose(alias);
+
+	   cout<<"\n Ocupacion Registrada";
+	   cout<<"\n oprima cualquier tecla para continuar";
+	   getch();
+	   return;
+
+} 
+
+void LISTADO_SECUENCIAL()
+{
+	cout<<"Listado de las ocupaciones: ";
+	alias=fopen("ocupacion.sec","rb");
+	if (alias==NULL)
+	{
+		cout<<"No existe al archivo";
+		getch();
+		return;
+    }
+	 cout<< "\n\rNo	        OCUPACION            DESCRIPCION     ACEPTAR"<<endl; 
+     cout << "\n\r---------------------------------------------------------"<<endl; 
+	 fread(&Registro,sizeof(Registro),1,alias);
+	 while(!feof(alias))
+	    {
+	     cout<<Registro.no_ocup<<"\t""\t"<<Registro.ocup<<"\t""\t"<<Registro.descrip<<"\t""\t"<<Registro.aceptar<<endl; 
+         fread(&Registro,sizeof(Registro),1,alias); 
+        } 
+  fclose(alias);
+   cout << "\n\r---------------------------------------------------------"<<endl; 
+   getch();
+   return;
+}
+
+void MODIFICACION_SECUENCIAL()
+{
+ int no_ocup;
+ cout<< "\n\rMODIFICACION DE REGISTROS DE OCUPACIONES";
+ alias=fopen("ocupacion.sec","rb+"); 
+ if(alias==NULL) 
+   {
+    cout << "\n\n\n\rNo existe el archivo !!!";
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+    getch();
+    return;
+   }
+ cout << "\n\n\n\rNumero de ocupacion: "; 
+ cin >> no_ocup;
+ fread(&Registro,sizeof(Registro),1,alias);
+ while(!feof(alias)) 
+      {
+       if(Registro.no_ocup==no_ocup)
+          {
+            cout << "\n\r------------------------------------------------------------------------";
+            cout << "\n\n\n\rAnote los nuevos datos ...";
+            cout << "\n\rOcupacion: "; 
+			cin.ignore();
+            getline(cin,Registro.ocup);
+            cout << "\n\rDescripcion : "; 
+			cin.ignore();
+            getline(cin,Registro.descrip);
+            do
+              {
+               cout << "\n\rAceptar : "; 
+			   Registro.aceptar=toupper(getche());
+              }while(Registro.aceptar!='S' && Registro.aceptar!='N');
+            fseek(alias,ftell(alias)-sizeof(Registro),SEEK_SET);
+            fwrite(&Registro,sizeof(Registro),1,alias); 
+            fclose(alias); 
+            cout << "\n\n\n\rRegistro modificado !!!";
+            cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+            getch();
+            return;
+          }
+       fread(&Registro,sizeof(Registro),1,alias);
+      }
+ cout << "\n\rNo se encuentra ese registro !!!";
+ fclose(alias); 
+ cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+ getch();
+ return;
+} 
+
+void CONSULTA_SECUENCIAL()
+{
+ int no_ocup;
+ cout << "\n\rCONSULTA DE REGISTROS DE OCUPACIONES";
+ alias=fopen("ocupacion.sec","rb+"); 
+ if(alias==NULL)
+   {
+    cout << "\n\n\n\rNo existe el archivo !!!";
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+    getch();
+    return;
+   }
+  cout << "\n\n\n\rNumero de ocupacion: "; 
+ cin >> no_ocup;
+ fread(&Registro,sizeof(Registro),1,alias);
+  while(!feof(alias)) 
+      {
+ if(Registro.no_ocup==no_ocup)
+ {
+ cout<< "\n\rNo	        OCUPACION            DESCRIPCION     ACEPTAR"<<endl; 
+ cout << "\n\r------------------------------------------------------------------------"<<endl;
+ cout<<Registro.no_ocup<<"\t""\t"<<Registro.ocup<<"\t""\t"<<Registro.descrip<<"\t""\t"<<Registro.aceptar<<endl; 
+ cout << "\n\r------------------------------------------------------------------------";
+ getch();
+ return;
+ }
+ else
+ {
+ cout << "\n\n\n\rNo existe ese registro !!!";
+ }
+  }
+ fclose(alias);
+ cout << "\n\n\n\n\r<<< Oprima cualquier tecla para continuar >>>";
+ getch();
+ return; 
+}
+void BAJA_LOGICA_SECUENCIAL()
+{
+}
