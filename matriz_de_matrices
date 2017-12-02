@@ -1,0 +1,75 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "stdlib.h"
+
+using namespace std;
+
+struct tMatriz
+   {int A[20][20];
+   };
+
+void cargarMatrizDeMatrices(tMatriz Mat[20][20], int filint, int colint, int filext, int colext);
+void multmenor(tMatriz Mat[20][20], int filint, int colint, int filext, int colext);
+
+void main()
+{tMatriz Mat[20][20];
+ int filint, colint, filext, colext;
+
+ cout<<"\n\n Ingrese la cantidad de filas de las matrices internas : ";
+ cin>>filint;
+ cout<<"\n\n Ingrese la cantidad de columnas de las matrices internas : ";
+ cin>>colint;
+
+ cout<<"\n\n Ingrese la cantidad de filas de las matrices externas : ";
+ cin>>filext;
+ cout<<"\n\n Ingrese la cantidad de columnas de las matrices externas : ";
+ cin>>colext;
+
+ cargarMatrizDeMatrices(Mat, filint, colint, filext, colext);
+ multmenor(Mat, filint, colint, filext, colext);
+
+ getch();
+}
+ 
+
+void cargarMatrizDeMatrices(tMatriz Mat[20][20], int filint, int colint, int filext, int colext)
+{ int i, j, k, l;
+
+  for(i = 0; i < filext; i++)
+        { for(j = 0; j < colext; j++)
+                { cout<<"\n\n ---------- Matriz Externa; Elemento["<<i<<"]["<<j<<"] ----------";
+                   for(k = 0; k < filint; k++)
+                        { for(l = 0; l < colint; l++)
+                                { cout<<"\n\n Matriz Interna; Elemento ["<<k<<"]["<<l<<"] : ";
+                                 cin>>Mat[i][j].A[k][l];
+                                }
+                        }
+                 }
+  }
+}
+
+void multmenor(tMatriz Mat[20][20], int filint, int colint, int filext, int colext)
+{ int i, j, k, l;
+ int aux=9999999;
+
+  for(i = 0; i < filext; i++)
+        { for(j = 0; j < colext; j++)
+                { 
+                   for(k = 0; k < filint; k++)
+                        { for(l = 0; l < colint; l++)
+                                {if (aux>Mat[i][j].A[k][l])
+                                     {aux=Mat[i][j].A[k][l];
+				                     }
+				                  Mat[i][j].A[k][l]=Mat[i][j].A[k][l]*aux;
+								  cout<<Mat[i][j].A[k][l]<<endl;
+                                }
+                        }
+                 }
+  }
+}
+
+
+
+
+
