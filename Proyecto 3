@@ -1,0 +1,63 @@
+#include "stdafx.h"
+#include "EmpleadorUnit.h"
+#include "EmpleadoUnit.h"
+void MenuAdministrador()
+{
+	int opcion;
+	bool valido;
+	
+	do{
+		//------------------------------------------------------
+		do
+		{
+			system("cls");
+			cout<<"1. Ingresar Nuevo Oficio"<<endl;
+			cout<<"2.Mostrar Cuentas de Empleadores"<<endl;
+			cout<<"3.Mostrar Cuentas de Empleados"<<endl;
+			cout<<"4.Mostrar Oficios en el Sistema"<<endl;
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 4 || opcion < 0)
+			{
+				valido = false;
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				NuevoOficio();
+				system("pause");
+				break;
+			}
+		case 2:
+			{
+				MostrarCuentasEmpleadores();	
+				system("pause");
+				break;
+			}
+		case 3:
+			{
+				MostrarCuentasEmpleados();
+				system("pause");
+				break;
+			}
+		case 4:
+			{
+				MostrarOficios();
+				system("pause");
+				break;
+			}
+		}
+
+	}while(opcion != 0);
+}
