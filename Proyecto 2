@@ -1,0 +1,47 @@
+#include "stdafx.h"
+
+
+struct usuario
+{
+	string usuario;
+	string password;
+};
+struct empleador
+{
+	string usuario;
+	string nombre;
+	string apellido;
+	int ci;
+	int telefono;
+};
+struct oficio
+{
+	string codigo;
+	string nombre;
+	string descripcion;
+};
+
+struct empleado
+{
+	string usuario;
+	string nombre;
+	string apellido;
+	int ci;
+	int telefono;
+	string direccion;
+};
+struct servicio
+{
+	string ususario;
+	string cod_of;
+};
+
+
+struct Cotizacion
+{
+	string usuario_orig;
+	string usuario_dest;
+	oficio of;
+	string Mensaje;
+	int precio;
+};
