@@ -1,0 +1,79 @@
+#include "stdafx.h"
+#include "AdministradorUnit.h"
+
+
+void MenuPrincipal();
+void AcercaDe();
+
+int main()
+{
+	MenuPrincipal();
+	return 0;
+}
+//-----------------------------------------------------------------
+void MenuPrincipal()
+{
+	int opcion;
+	bool valido;
+
+	
+	do{
+		//--------------------------------------
+			do{
+				system("cls");
+				cout<<"1. Empleador"<<endl;
+				cout<<"2. Empleado"<<endl;
+				cout<<"3. Acerca de"<<endl;
+				cout<<"4. Administrador"<<endl;
+				cout<<"0. Salir"<<endl;
+				cout<<"Ingrese la opcion a realizar: ";
+				cin>>opcion;
+				if(opcion > 4 || opcion < 0)
+				{
+					valido = false;
+					cout<<"Opcion Incorrecta....";
+					Sleep(1000);
+				}
+				else
+				{
+					valido = true;
+				}
+			}while(!valido);
+		//-------------------------------------------
+
+		switch(opcion)
+		{
+		case 1 :
+			{
+				MenuAccesoEmpleadores();
+				break;
+			}
+		case 2 :
+			{
+				MenuAccesoEmpleados();
+				break;
+			}
+		case 3 :
+			{
+				AcercaDe();
+				break;
+			}
+		case 4 :
+			{
+				MenuAdministrador();
+				break;
+			}
+		case 0 :
+			{
+				system("cls");
+				cout<<"\n\nGracias por usar \"Yo te Contrato\" "<<endl;
+				Sleep(2000);
+				break;
+			}
+
+		}
+
+	}while(opcion != 0);
+
+	
+}
