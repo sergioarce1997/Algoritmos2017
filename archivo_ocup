@@ -223,10 +223,7 @@ void CONSULTA_SECUENCIAL()
  getch();
  return;
  }
- else
- {
- cout << "\n\n\n\rNo existe ese registro !!!";
- }
+ fread(&Registro,sizeof(Registro),1,alias);
   }
  fclose(alias);
  cout << "\n\n\n\n\r<<< Oprima cualquier tecla para continuar >>>";
