@@ -1,0 +1,1417 @@
+#include "stdafx.h"
+#include <iostream>
+#include "stdio.h"
+#include <string>
+#include <windows.h>//system y sleep
+#include <iomanip>//setw
+
+
+using namespace std;
+
+//------------------Estrcucturas Strings----------------------------
+
+struct usuario_st
+{
+	string usuario;
+	string password;
+};
+struct empleador_st
+{
+	string usuario;
+	string nombre;
+	string apellido;
+	int ci;
+	int telefono;
+};
+struct oficio_st
+{
+	string nombre;
+	string descripcion;
+};
+struct empleado_st
+{
+	string usuario;
+	string nombre;
+	string apellido;
+	int ci;
+	int telefono;
+	string direccion;
+};
+struct servicio_st
+{
+	string usuario;
+	string oficio;
+};
+struct cotizacion_st
+{
+	string usuario_orig;
+	string usuario_dest;
+	string oficio;
+	string mensaje;
+	int precio;
+};
+
+
+//--------------------FIN Estrcucturas Strings-------------------------
+
+//------------------Area Usuario----------------------------------------
+
+#define arch_us_empleador "Usuarios_Empleadores.dat"
+#define arch_us_empleado "Usuarios_Empleados.dat"
+
+bool GuardarUsuario(usuario_st u,string tipo)
+{
+	FILE *ptr;
+	if(tipo.compare("empleador") == 0 )
+	{
+		ptr = fopen(arch_us_empleador,"ab");
+	}
+	if(tipo.compare("empleado") == 0 )
+	{
+		ptr = fopen(arch_us_empleado,"ab");
+	}
+	if(ptr != NULL)
+	{
+		usuarioc uc;
+		strcpy(uc.usuario,u.usuario.c_str());
+		strcpy(uc.password,u.password.c_str());
+		fwrite(&uc,sizeof(uc),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool usuarioExistente(string us,string tipo)
+{
+	bool existe = false;
+	usuarioc uc;
+	usuario_st u;
+	FILE *ptr;
+	if(tipo.compare("empleador") == 0 )
+	{
+		ptr = fopen(arch_us_empleador,"rb");
+		
+	}
+	if(tipo.compare("empleado") == 0 )
+	{
+		ptr = fopen(arch_us_empleado,"rb");
+	
+	}
+	if(ptr != NULL )
+	{
+		
+		fread(&uc,sizeof(uc),1,ptr);
+		while(feof(ptr) == false && existe == false)
+		{
+			u.usuario = uc.usuario;
+			
+			if(u.usuario.compare(us) == 0 )
+			{
+				existe = true;
+			}
+			fread(&uc,sizeof(uc),1,ptr);
+		}
+
+		
+	
+	}
+		
+	else
+	{
+		cout<<"\t\t\t\t\tEl archivo no existe"<<endl;
+	}
+	fclose(ptr);
+	return existe;
+}
+bool ValidarUsuario(usuario_st u,string tipo)
+{
+	bool valido = false;
+	usuarioc uc;
+	FILE *ptr;
+	if(tipo.compare("empleador") == 0 )
+	{
+		ptr = fopen(arch_us_empleador,"rb");
+	}
+	if(tipo.compare("empleado") == 0 )
+	{
+		ptr = fopen(arch_us_empleado,"rb");
+	}
+	if(ptr != NULL)
+	{
+		fread(&uc,sizeof(uc),1,ptr);
+		while(feof(ptr) == false && valido == false)
+		{
+			
+			
+			if(u.usuario.compare(uc.usuario) == 0 && u.password.compare(uc.password) == 0)
+			{
+				valido = true;
+			}
+			fread(&uc,sizeof(uc),1,ptr);
+		}
+
+		fclose(ptr);
+		
+	}
+	else
+	{
+		cout<<"\t\t\t\t\tEl archivo no existe"<<endl;
+	}
+	return valido;
+}
+
+//------------------Fin Area Usuario----------------------------------------
+//---------------------------Area Oficio------------------------------------------
+
+#define archivo "Oficios.txt"
+
+bool EscribirOficio(oficio_st of)
+{
+	FILE *ptr;
+	ptr = fopen(archivo,"a");
+	if(ptr != NULL)
+	{
+		oficioc oc;
+		strcpy(oc.nombre,of.nombre.c_str());
+		strcpy(oc.descripcion,of.descripcion.c_str());
+		fwrite(&oc,sizeof(oc),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void MostrarOficios()
+{
+	system("cls");
+	FILE *ptr;
+	int c = 1;
+	ptr = fopen(archivo,"r");
+	
+	if(ptr != NULL)
+	{
+		oficioc oc;
+		oficio_st o;
+		cout<<endl<<endl<<endl<<endl;
+		cout<<"\t\t\t\tOficios en Disponibles en el Sistema"<<endl;
+		fread(&oc,sizeof(oc),1,ptr);
+		while(feof(ptr) == false)
+		{
+			o.nombre = oc.nombre;
+			o.descripcion = oc.descripcion;
+
+			cout<<"\t\t\t\t"<<c<<".- "<< o.nombre<<endl;
+			cout<<"\t\t\t\t\t"<<o.descripcion<<endl;
+			fread(&oc,sizeof(oc),1,ptr);
+			c++;
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"\t\t\t\t"<<"No existen Oficios Registrados"<<endl;
+	}
+}
+int CantidadOfi()
+{
+	FILE *ptr;
+	oficioc o;
+	int c = 0;
+	ptr = fopen(archivo,"r");
+	if(ptr != NULL)
+	{
+		fread(&o,sizeof(o),1,ptr);
+		c++;
+		while(feof(ptr) == false)
+		{
+			fread(&o,sizeof(o),1,ptr);
+			c++;
+		}
+		fclose(ptr);
+	}
+	return c;
+}
+oficio_st BuscarOficio(int n)
+{
+	FILE *ptr;
+	oficio_st of;
+	oficioc o;
+	ptr = fopen(archivo,"r");
+	if(ptr != NULL)
+	{
+		fseek(ptr,(n-1)*sizeof(o),SEEK_SET);
+		fread(&o,sizeof(o),1,ptr);
+		of.nombre = o.nombre;
+		of.descripcion = o.descripcion;
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"\t\t\t\t\tEl archivo no existe"<<endl;
+	}
+	return of;
+}
+void NuevoOficio()
+{
+	system("cls");
+	oficio_st o;
+	MostrarOficios();
+	cout<<endl<<"\t\t\t\tIngrese el nombre del Oficio  : ";
+	fflush(stdin);//vaciar buffer como cin.ignore(); 
+	getline(cin,o.nombre);
+	cout<<endl<<"\t\t\t\tIngrese la descripcion del Oficio  : ";
+	fflush(stdin);
+	getline(cin,o.descripcion);
+	if(EscribirOficio(o))
+	{
+		cout<<"\t\t\t\tIngreso Exitoso..."<<endl;
+		
+	}
+	else
+	{
+		cout<<"\t\t\t\t\t\tOcurrio un erro al intentar escribir en el Archivo"<<endl;
+	}
+}
+
+//---------------------------FIN Area Oficio------------------------------------------
+
+//-------------------------------Area Servicio----------------------------------------
+#define Arch_servicio "Servicios.dat"
+
+bool GuardarServicio(servicio_st s)
+{
+	FILE *ptr;
+	ptr = fopen(Arch_servicio,"ab");
+	if(ptr != NULL)
+	{
+		servicioc sc;
+		strcpy(sc.usuario,s.usuario.c_str());
+		strcpy(sc.oficio,s.oficio.c_str());
+		
+		fwrite(&sc,sizeof(sc),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void MostrarServicios()
+{
+	system("cls");
+	FILE *ptr;
+	servicioc sc;
+	servicio_st s;
+	ptr = fopen(Arch_servicio,"rb");
+	if(ptr != NULL)
+	{
+		cout<<"\t\t\tLos Las Relaciones Servicio-Usuario(empleado) registrados son la Siguientes:"<<endl;
+		cout<<"\n\t\t\t\t";
+		cout<<setw(20)<<"Usuario"<<setw(20)<<"Servicio"<<endl;//setw() sirve para crear casillas de espacio en consola
+		fread(&sc,sizeof(sc),1,ptr);
+		while(feof(ptr) == false)
+		{			
+			s.usuario = sc.usuario;
+			s.oficio= sc.oficio;
+			cout<<"\t\t\t\t";	
+			cout<<setw(20)<<s.usuario<<setw(20)<<s.oficio<<endl;
+
+			fread(&sc,sizeof(sc),1,ptr);
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"No existe el archivo"<<endl;
+	}
+
+}
+void BuscarTrabajador(usuario_st ue)
+{
+	int op;
+	do
+	{
+			
+			MostrarOficios();
+			cout<<"\t\t\t\t";
+			cout<<"0. Salir"<<endl;
+		
+			cout<<"\t\t\t\t";
+			cout<<"Ingrese el numero del tipo de trabajo que Busca: ";
+			cin>>op;
+			if(op>0 && op<= CantidadOfi())
+			{
+				system("cls");
+				
+				oficio_st of;
+				of = BuscarOficio(op);
+				
+				FILE *ptr;
+				servicioc sc;
+				servicio_st s;
+				ptr = fopen(Arch_servicio,"rb");
+				if(ptr != NULL)
+				{
+					int c =0;
+					cout<<endl<<endl<<endl;
+					cout<<"\t\t\t";
+					cout<<"Los usuarios que ofrecen sus servicios en el oficio que busca son: "<<endl;
+
+					fread(&sc,sizeof(sc),1,ptr);
+					while(feof(ptr) == false)
+					{			
+						s.oficio = sc.oficio;
+						s.usuario = sc.usuario;
+
+						if(s.oficio.compare(of.nombre) == 0)
+						{
+							c++;
+							cout<<"\n\t\t\t\t";
+							cout<<c<<" .- "<<s.usuario<<endl;
+							
+						}
+
+						
+						fread(&sc,sizeof(sc),1,ptr);
+					}
+					if(c == 0 )
+					{
+						cout<<"\t\t\t\t";
+						cout<<"No se encontraron Usuarios que ofrezcan esos sevicios en este momento"<<endl;
+					}
+					else
+					{
+					cout<<"\n\n\t\t";
+					cout<<"Para ver Los datos personales de algun Usuario o contactarlo vuelva al menu anterior"<<endl;
+					}
+				}
+				else
+				{
+					cout<<"\t\t\t";
+					cout<<"No hay servicios servicios Guardados"<<endl;
+				}
+
+
+			fclose(ptr);
+			system("pause");
+			}
+			else
+			{
+				if(op != 0)
+				{
+					cout<<"\t\t\t\t\t\t";
+					cout<<"Opcion Inorrecta"<<endl;
+					Sleep(1000);
+				}
+			}
+	}while(op != 0);
+}
+//----------------------------FIN area Servicio---------------------------------------
+//---------------------Area Cotizacion---------------------------------------------
+#define Arch_Cotizacion "Cotizaciones.dat"
+
+bool EscribirCotizacion(cotizacion_st cot)
+{
+	FILE *ptr; 
+	ptr = fopen(Arch_Cotizacion,"ab");
+	if(ptr != NULL)
+	{
+		cotizacionc co;
+		
+		strcpy(co.Mensaje,cot.mensaje.c_str());
+		strcpy(co.oficio,cot.oficio.c_str());
+		strcpy(co.usuario_dest,cot.usuario_dest.c_str());
+		strcpy(co.usuario_orig,cot.usuario_orig.c_str());
+		co.precio = cot.precio;
+		fwrite(&co,sizeof(co),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void MostrarCotizacionesEntrada(usuario_st u,string tipo)
+{
+	system("cls");
+	FILE *ptr;
+	ptr = fopen(Arch_Cotizacion,"ab");
+	fclose(ptr);
+	
+	
+	ptr = fopen(Arch_Cotizacion,"rb");
+	
+	if(ptr != NULL)
+	{
+		cotizacionc co;
+		cotizacion_st cot;
+		cout<<endl<<endl<<endl<<endl;
+		if(tipo.compare("empleado") == 0)
+		{
+		cout<<"\t\t\t\tHa recibidos las siguientes solicitudes de cotizaciones:"<<endl;
+		}
+		if(tipo.compare("empleador") == 0)
+		{
+		cout<<"\t\t\t\tHa recibidos las siguientes respuestas de cotizaciones:"<<endl;
+		}
+		fread(&co,sizeof(co),1,ptr);
+		while(feof(ptr) == false)
+		{
+			cot.usuario_orig = co.usuario_orig;
+			cot.usuario_dest = co.usuario_dest;
+			cot.oficio = co.oficio;
+			cot.mensaje = co.Mensaje;
+			cot.precio = co.precio;
+			if(u.usuario.compare(cot.usuario_dest) == 0)
+			{
+				cout<<"-------------------------------------------------------------------\n";
+							
+				cout<<"\t\t\t"<<"De: "<< cot.usuario_orig<<endl;
+				cout<<"\t\t\t"<<"Para: "<<cot.usuario_dest<<endl;
+				cout<<"\t\t\t"<<"Tema: "<<cot.oficio<<endl;
+				if(tipo.compare("empleador") == 0)
+				{
+					cout<<"\t\t\t"<<"Precio: "<<cot.precio<<endl;
+				}
+				cout<<"\t\t\t"<<"Mensaje: "<<cot.mensaje<<endl;
+
+			}
+
+			fread(&co,sizeof(co),1,ptr);
+			
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"\t\t\t\t"<<"No Tienen Cotizaciones Registradas"<<endl;
+	}
+}
+int CantidadCot(usuario_st u)
+{
+	FILE *ptr;
+	cotizacionc co;
+	int c = 0;
+	ptr = fopen(Arch_Cotizacion,"r");
+	if(ptr != NULL)
+	{
+		fread(&co,sizeof(co),1,ptr);
+		c++;
+		while(feof(ptr) == false)
+		{
+			fread(&co,sizeof(co),1,ptr);
+			c++;
+		}
+		fclose(ptr);
+	}
+	return c;
+}
+
+void NuevaCotizacion(usuario_st u,string tipo)
+{
+	cotizacion_st cot;
+	bool existe = false;
+	do
+	{
+	system("cls");
+	
+	cot.usuario_orig = u.usuario;
+	cout<<endl<<"\t\t\t\tIngrese el Usuario de Destino: ";
+	fflush(stdin);
+	getline(cin,cot.usuario_dest);
+	if(usuarioExistente(cot.usuario_dest,"empleado") == true || usuarioExistente(cot.usuario_dest,"empleador") == true)
+	{
+		
+		existe = true;
+	}
+	else
+	{
+		cout<<"El ususario no existe en la base de datos vuelva a intentar\n";
+	}
+	}while(existe == false);
+	
+	cout<<endl<<"\t\t\t\tIngrese el Oficio de la Cotizacion:  : ";
+	fflush(stdin);
+	getline(cin,cot.oficio);
+	
+	if(tipo.compare("empleado") == 0)
+	{
+		cout<<"\t\t\t\tIngrese el precio de la cotizacion: ";
+		fflush(stdin);
+		cin>>cot.precio;
+	}
+	cout<<"\t\t\t\tIngrese el mensaje:\n\t";
+	fflush(stdin);
+	getline(cin,cot.mensaje);
+
+	
+	EscribirCotizacion(cot);
+}
+
+//-----------------FIN Area Cotizacion---------------------------------------------
+
+
+
+//--------------------------Area Empleado--------------------------------------------
+#define Arch_empleados "Empleados.dat"
+
+
+bool EscribirEmpleado(empleado_st e)
+{
+	FILE *ptr;
+	ptr = fopen(Arch_empleados,"ab");
+	if(ptr != NULL)
+	{
+		empleadoc ec;
+		strcpy(ec.usuario,e.usuario.c_str());
+		strcpy(ec.apellido,e.apellido.c_str());
+		strcpy(ec.nombre,e.nombre.c_str());
+		ec.ci = e.ci;
+		ec.telefono = e.telefono;
+		strcpy(ec.direccion,e.direccion.c_str());
+		
+		fwrite(&ec,sizeof(ec),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void NuevoEmpleado()
+{
+	empleado_st e;
+	usuario_st ue;
+	int op;
+	
+	do{
+		system("cls");
+		cout<<endl<<endl<<endl<<endl;
+		cout<<"\t\t\t\t\t-----------Creando un nuevo Perfil de Empleado------------"<<endl;
+		cout<<"\t\t\t\t\t----------------Creando un nuevo Usuario------------------"<<endl;
+		cout<<"\t\t\t\t\tIngrese un nuevo usuario: ";
+		fflush(stdin);
+		getline(cin,ue.usuario);		
+		if (ue.usuario.length()  ==0)
+		{
+			cout<<"\t\t\t\t\tDebe Ingresar un usuario"<<endl;
+		}
+		if(usuarioExistente(ue.usuario,"empleado") == true)
+		{
+			cout<<"\t\t\t\t\tUsuario existente"<<endl;
+		}
+	}while(ue.usuario.length()  == 0 || usuarioExistente(ue.usuario,"empleado") == true);
+	
+	e.usuario = ue.usuario;
+
+	do{
+		cout<<"\t\t\t\t\tIngrese su contrasenha: ";
+		fflush(stdin);
+		getline(cin,ue.password);
+		if (ue.password.length()==0)
+		{
+			cout<<"\t\t\t\t\tDebe Ingresar una contrasenha"<<endl;
+		}
+	}while(ue.password.length()==0);
+	GuardarUsuario(ue,"empleado");
+	cout<<"\t\t\t\t\t--------Ingresando datos personales del Usuario-----------"<<endl;
+	do{
+		cout<<"\t\t\t\t\t";
+		cout<<"Ingrese su Nombre: ";
+		fflush(stdin);
+		getline(cin,e.nombre);
+		if (e.nombre.length() == 0)
+		{
+			cout<<"\t\t\t\t\t";
+			cout<<"Debe Ingresar un nombre"<<endl;
+		}
+	}while(e.nombre.length() == 0);
+
+	do{
+		cout<<"\t\t\t\t\t";
+		cout<<"Ingrese sus Apellidos: ";
+		fflush(stdin);
+		getline(cin,e.apellido);
+		if (e.apellido.length() == 0)
+		{
+			cout<<"\t\t\t\t\t";
+			cout<<"Debe Ingresar sus Apellidos"<<endl;
+		}
+	}while(e.apellido.length()==0);
+	
+	cout<<"\t\t\t\t\t";
+	cout<<"Ingrese su carnet de Indentidad: ";
+	cin>>e.ci;
+
+	cout<<"\t\t\t\t\t";
+	cout<<"Ingrese su numero Telefonico: ";
+	cin>>e.telefono;
+
+	do{
+		cout<<"\t\t\t\t\t";
+		cout<<"Ingrese su Direccion: ";
+		fflush(stdin);
+		getline(cin,e.direccion);
+		if (e.direccion.length() == 0)
+		{
+			cout<<"\t\t\t\t\t";
+			cout<<"Debe Ingresar su Direccion"<<endl;
+		}
+	}while(e.apellido.length()==0);
+	EscribirEmpleado(e);
+
+
+	cout<<"\t\t\t\t\t";
+	cout<<"Ingrese los trabajos que ofrece : ";
+	
+	
+		
+		system("cls");
+		
+		servicio_st s;
+		
+		do
+		{
+			
+			MostrarOficios();
+			cout<<"\t\t\t\t\t\t";
+			cout<<"0. Terminar de Ingresar oficios"<<endl;
+		
+			cout<<"\t\t\t\t\t\t";
+			cout<<"Ingrese el numero de la opcion deseado: ";
+			cin>>op;
+			if(op>0 && op<= CantidadOfi())
+			{
+				s.usuario = e.usuario;
+				s.oficio = BuscarOficio(op).nombre;
+
+
+				GuardarServicio(s);
+				
+				
+			}
+			else
+			{
+				cout<<"\t\t\t\t\t\t";
+				cout<<"Opcion Inorrecta"<<endl;
+			}
+			//
+		}while(op != 0);
+	
+	
+	
+	
+	
+}
+void MenuEmpleado(usuario_st ue)
+{
+
+	int opcion;
+	bool valido;
+	
+	do{
+		
+		do
+		{
+			system("cls");
+			cout<<endl<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"1. Bandeja de Entrada"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"2. Responder Empleador"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 2 || opcion < 0)
+			{
+				valido = false;
+				cout<<"\t\t\t\t";
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				MostrarCotizacionesEntrada(ue,"empleado");
+				system("pause");
+				break;
+			}
+		case 2:
+			{
+				NuevaCotizacion(ue,"empleado");
+				system("pause");
+				break;
+			}
+
+		}
+
+	}while(opcion != 0);
+	
+}
+void MostrarCuentasEmpleados()
+{
+	system("cls");
+	FILE *ptr;
+	empleadoc ec;
+	empleado_st e;
+	ptr = fopen(Arch_empleados,"rb");
+	if(ptr != NULL)
+	{
+		cout<<setw(10)<<"Usuario"<<setw(10)<<"Nombre"<<setw(10)<<"Apellido"<<setw(10)<<"CI"<<setw(10)<<"Telefono"<<setw(25)<<"Direccion"<<endl;
+		fread(&ec,sizeof(ec),1,ptr);
+		while(feof(ptr) == false)
+		{			
+			e.apellido = ec.apellido;
+			e.ci = ec.ci;
+			e.nombre = ec.nombre;
+			e.telefono = ec.telefono;
+			e.usuario = ec.usuario;
+			e.direccion = ec.direccion;
+			
+			cout<<setw(10)<<e.usuario<<setw(10)<<e.nombre<<setw(10)<<e.apellido<<setw(10)<<e.ci<<setw(10)<<e.telefono<<setw(25)<<e.direccion<<endl;
+			
+
+
+
+			fread(&ec,sizeof(ec),1,ptr);
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"No existe el archivo"<<endl;
+	}
+}
+void MenuAccesoEmpleados()
+{
+	int opcion;
+	bool valido;
+	
+	do{
+		//------------------------------------------------------
+		do
+		{
+			system("cls");
+			cout<<endl<<endl<<endl<<endl;
+			cout<<"\t\t\t\t\t";
+			cout<<"1. Crear Nuevo Usuario "<<endl;
+			cout<<"\t\t\t\t\t";
+			cout<<"2. Ingresar a Cuenta Usuario Existente"<<endl;
+			cout<<"\t\t\t\t\t";
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"\t\t\t\t\t";
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 2 || opcion < 0)
+			{
+				valido = false;
+				cout<<"\t\t\t\t\t";
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				NuevoEmpleado();
+				break;
+			}
+		case 2:
+			{
+				
+				FILE *p = fopen(Arch_servicio,"ab");
+				fclose(p);
+				usuario_st ue;
+				int intentos = 1; 
+				bool valido;
+				do
+				{
+					system("cls");
+					cout<<"\t\t\t\t\t";
+					cout<<"-------------Acceso de Empleados--------------"<<endl;
+					cout<<"\n\t\t\t\t\t";
+					cout<<"Usuario: ";
+					fflush(stdin);
+					getline(cin,ue.usuario);
+					
+					cout<<"\n\t\t\t\t\t";
+					cout<<"Contrasenha: ";
+					fflush(stdin);
+					getline(cin,ue.password);
+					intentos++;
+					valido = ValidarUsuario(ue,"empleado");
+				}while( valido == false && intentos <= 3) ;
+				if(intentos > 3 && valido == false)
+				{
+					cout<<"\n\n\t\t\t\t\t";
+					cout<<"Sobrepaso el numero de intentos";
+					Sleep(3000);
+				}
+				else
+				{
+					MenuEmpleado(ue);
+				}
+				
+				break;
+			}
+	
+		}
+
+	}while(opcion != 0);
+}
+void DatosTrabajador(string u)
+{
+	system("cls");
+	bool existe = false;
+	FILE *ptr;
+	empleadoc ec;
+	empleado_st e;
+	ptr = fopen(Arch_empleados,"rb");
+	if(ptr != NULL)
+	{
+		cout<<setw(10)<<"Usuario"<<setw(10)<<"Nombre"<<setw(10)<<"Apellido"<<setw(10)<<"CI"<<setw(10)<<"Telefono"<<setw(25)<<"Direccion"<<endl;
+		fread(&ec,sizeof(ec),1,ptr);
+		while(feof(ptr) == false)
+		{
+				e.apellido = ec.apellido;
+				e.ci = ec.ci;
+				e.nombre = ec.nombre;
+				e.telefono = ec.telefono;
+				e.usuario = ec.usuario;
+				e.direccion = ec.direccion;
+			if(e.usuario.compare(u) == 0)
+			{
+				cout<<setw(10)<<e.usuario<<setw(10)<<e.nombre<<setw(10)<<e.apellido<<setw(10)<<e.ci<<setw(10)<<e.telefono<<setw(25)<<e.direccion<<endl;
+				existe = true;
+			}
+
+
+				fread(&ec,sizeof(ec),1,ptr);
+		}
+		if(existe == false)
+		{
+			cout<<"El Usuario no esxite\n";
+		}
+		
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"No existe el archivo"<<endl;
+	}
+}
+
+
+//--------------------------FIN Area Empleado--------------------------------------------
+//------------------------Area Empleador----------------------------------------------
+
+#define Arch_empleador "Empleadores.dat"
+
+
+bool GuardarEmpleador(empleador_st e)
+{
+	FILE *ptr;
+	ptr = fopen(Arch_empleador,"ab");
+	if(ptr != NULL)
+	{
+		empleadorc ec;
+		strcpy(ec.apellido,e.apellido.c_str());//eta funcion guarda de un string a un arreglo de char
+		strcpy(ec.nombre,e.nombre.c_str());
+		strcpy(ec.usuario,e.usuario.c_str());
+		ec.ci = e.ci;
+		ec.telefono = e.telefono;
+		fwrite(&ec,sizeof(ec),1,ptr);
+		fclose(ptr);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void NuevoEmpleador()
+{
+	empleador_st e;
+	usuario_st ue;
+	system("cls");
+	cout<<endl<<endl;
+	cout<<"\t\t\t\t";
+	cout<<"-----------Creando un nuevo Perfil de Empleador-----------"<<endl;
+	
+	do{
+		cout<<"\t\t\t\t";
+		cout<<"Ingrese un nuevo usuario: ";
+		fflush(stdin);
+		getline(cin,ue.usuario);		
+		if (ue.usuario.length()  ==0)
+		{
+			cout<<"\t\t\t\t";
+			cout<<"Debe Ingresar un usuario"<<endl;
+		}
+		if(usuarioExistente(ue.usuario,"empleador") == true)
+		{
+			cout<<"\t\t\t\t";
+			cout<<"Ese Usuario ya existe, elija otro."<<endl;
+		}
+	}while(ue.usuario.length()  ==0 && usuarioExistente(ue.usuario,"empleador") == true);
+	e.usuario = ue.usuario;
+	
+	do{
+		cout<<"\t\t\t\t";
+		cout<<"Ingrese su contrasenha: ";
+		fflush(stdin);//limpiar el buffer de la consola
+		getline(cin,ue.password);
+		if (ue.password.length()==0)
+		{
+			cout<<"\t\t\t\t";
+			cout<<"Debe Ingresar una contrasenha"<<endl;
+		}
+	}while(ue.password.length()==0);
+	GuardarUsuario(ue,"empleador");
+
+	do{
+		cout<<"\t\t\t\t";
+		cout<<"Ingrese su Nombre: ";
+		fflush(stdin);
+		getline(cin,e.nombre);
+		if (e.nombre.length() == 0)
+		{
+			cout<<"\t\t\t\t";
+			cout<<"Debe Ingresar un nombre"<<endl;
+		}
+	}while(e.nombre.length() == 0);
+
+	do{
+		cout<<"\t\t\t\t";
+		cout<<"Ingrese sus Apellidos: ";
+		fflush(stdin);
+		getline(cin,e.apellido);
+		if (e.apellido.length() == 0)
+		{
+			cout<<"\t\t\t\t";
+			cout<<"Debe Ingresar sus Apellidos"<<endl;
+		}
+	}while(e.apellido.length()==0);
+	
+	cout<<"\t\t\t\t";
+	cout<<"Ingrese su carnet de Indentidad: ";
+	cin>>e.ci;
+
+	cout<<"\t\t\t\t";
+	cout<<"Ingrese su numero Telefonico: ";
+	cin>>e.telefono;
+
+	GuardarEmpleador(e);
+	
+}
+void MenuEmpleador(usuario_st u)
+{
+	int opcion;
+	bool valido;
+	
+	do{
+		//------------------------------------------------------
+		do
+		{
+			system("cls");
+			cout<<endl<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"1. Buscar Personal"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"2. Ver Datos Personales de un Trabajador"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"3. Contactar a un Trabajador"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"4. Ver Bandeja de Entrada"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 4 || opcion < 0)
+			{
+				valido = false;
+				cout<<"\t\t\t\t";
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				BuscarTrabajador(u);
+				
+				break;
+			}
+		case 2:
+			{
+				string user;
+				do
+				{
+				system("cls");
+				
+				cout<<endl<<endl<<endl;
+				cout<<"\t";
+				cout<<"Ingrese el usuario de un trabajador para ver sus datos personales: ";
+				fflush(stdin);
+				getline(cin,user);
+				}while(user.length() == 0);
+				DatosTrabajador(user);
+				system("pause");
+				break;
+			}
+		case 3:
+			{
+				NuevaCotizacion(u,"empleador");
+				system("pause");
+				break;
+			}
+		case 4:
+			{
+				MostrarCotizacionesEntrada(u,"empleador");
+				system("pause");
+				break;
+			}
+		}
+
+	}while(opcion != 0);
+	
+}
+void MostrarCuentasEmpleadores()
+{
+	system("cls");
+	FILE *ptr;
+	empleadorc ec;
+	empleador_st e;
+	ptr = fopen(Arch_empleador,"rb");
+	if(ptr != NULL)
+	{
+		cout<<setw(15)<<"usuario"<<setw(15)<<"nombre"<<setw(20)<<"apellido"<<setw(10)<<"ci"<<setw(10)<<"telefono"<<endl;
+		fread(&ec,sizeof(ec),1,ptr);
+		while(feof(ptr) == false)
+		{			
+			e.apellido = ec.apellido;
+			e.ci = ec.ci;
+			e.nombre = ec.nombre;
+			e.telefono = ec.telefono;
+			e.usuario = ec.usuario;
+			
+			cout<<setw(15)<<e.usuario<<setw(15)<<e.nombre<<setw(20)<<e.apellido<<setw(10)<<e.ci<<setw(10)<<e.telefono<<endl;
+			fread(&ec,sizeof(ec),1,ptr);
+		}
+	}
+	else
+	{
+		cout<<"\t\t\t\t";
+		cout<<"No existe el archivo"<<endl;
+	}
+}
+void MenuAccesoEmpleadores()
+{
+	int opcion;
+	bool valido;
+	
+	do{
+		//------------------------------------------------------
+		do
+		{
+			system("cls");
+			cout<<endl<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"1. Crear Nuevo Usuario "<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"2. Ingresar a Cuenta Usuario Existente"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"\t\t\t\t";
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 2 || opcion < 0)
+			{
+				valido = false;
+				cout<<"\t\t\t\t";
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				NuevoEmpleador();
+				break;
+			}
+		case 2:
+			{
+				usuario_st ue;
+				int intentos = 1; 
+				bool valido;
+				do
+				{
+					system("cls");
+					cout<<"\t\t\t\t\t";
+					cout<<"-------------Acceso de Empleadores--------------"<<endl;
+					cout<<"\n\t\t\t\t\t";
+					cout<<"Usuario: ";
+					fflush(stdin);
+					getline(cin,ue.usuario);
+					
+					cout<<"\n\t\t\t\t\t";
+					cout<<"Contrasenha: ";
+					fflush(stdin);
+					getline(cin,ue.password);
+					intentos++;
+					valido = ValidarUsuario(ue,"empleador");
+				}while( valido == false && intentos <= 3) ;
+				if(intentos > 3 && valido == false)
+				{
+					cout<<"\n\n\t\t\t\t\t";
+					cout<<"Sobrepaso el numero de intentos";
+					Sleep(3000);
+				}
+				else
+				{
+					MenuEmpleador(ue);
+				}
+				
+				break;
+			}
+	
+		}
+
+	}while(opcion != 0);
+}
+
+
+//---------------------FIN Area Empelador----------------------------------------------
+
+//------------------------Area Administrador-------------------------------------------
+void MenuAdministrador()
+{
+	int opcion; //clave=12345, clav;
+	bool valido;
+	//cout<<"\t\t\t\t\t";
+	//cout<<"=====================================================";
+	//cout<<"\t\t\t\t\t\t";
+	//cout<<"Ingrese la clave del adminitrador: ";
+	//cin>>clav;
+	//if (clav==clave)
+	//{
+		valido=false;
+	do{
+		//------------------------------------------------------
+		do
+		{
+			system("cls");
+			cout<<endl<<endl<<endl<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"1. Ingresar Nuevo Oficio"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"2.Mostrar Cuentas de Empleadores"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"3.Mostrar Cuentas de Empleados"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"4.Mostrar Oficios en el Sistema"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"5.Mostrar las relaciones Servicios-Empleados en el Sistema"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"0. Volver Atras"<<endl;
+			cout<<"\t\t\t\t\t\t";
+			cout<<"Ingrese la opcion a realizar: ";
+			cin>>opcion;
+			if(opcion > 5 || opcion < 0)
+			{
+				valido = false;
+				cout<<"\t\t\t\t\t\t";
+				cout<<"Opcion Incorrecta....";
+				Sleep(1000);
+			}
+			else
+			{
+				valido = true;
+			}
+		}while(!valido);
+		//--------------------------------------------------------------
+		
+		switch(opcion)
+		{
+		case 1:
+			{
+				NuevoOficio();
+				system("pause");
+				break;
+			}
+		case 2:
+			{
+				MostrarCuentasEmpleadores();	
+				system("pause");
+				break;
+			}
+		case 3:
+			{
+				MostrarCuentasEmpleados();
+				system("pause");
+				break;
+			}
+		case 4:
+			{
+				MostrarOficios();
+				system("pause");
+				break;
+			}
+		case 5:
+			{
+				MostrarServicios();
+				system("pause");
+				break;
+			}
+		}
+
+	}while(opcion != 0);
+	//}
+	//else{
+		//cout<<"\t\t\t\t\t";
+		//cout<<"=======================================";
+		//cout<<"\t\t\t\t\t\t";
+		//cout<<"clave invalida"<<endl;
+		//Sleep(1000);
+		//valido=true;
+	}
+//}
+
+//----------------------------FIN Area Administrador-------------------------------------------
+
+//------------------------Programa Principal MAIN--------------------
+void AcercaDe()
+{
+ cout<<"Programa realizado por:" <<endl;
+ cout<<"Sergio Arce" <<endl;
+ cout<<"Samuel Zamora" <<endl;
+ cout<<"Leonardo Lara" <<endl;
+ system("pause");
+}
+void MenuPrincipal()
+{
+	int opcion;
+	bool valido;
+
+	
+	do{
+		//--------------------------------------
+			do{
+				system("cls");
+				cout<<endl<<endl<<endl<<endl;
+				cout<<"\t\t\t\t\t\t"<<"1. Empleador"<<endl;
+				cout<<"\t\t\t\t\t\t"<<"2. Empleado"<<endl;
+				cout<<"\t\t\t\t\t\t"<<"3. Acerca de"<<endl;
+				cout<<"\t\t\t\t\t\t"<<"4. Administrador"<<endl;
+				cout<<"\t\t\t\t\t\t"<<"0. Salir"<<endl;
+				cout<<"\t\t\t\t\t\t"<<"Ingrese la opcion a realizar: ";
+				cin>>opcion;
+				if(opcion > 4 || opcion < 0)
+				{
+					valido = false;
+					cout<<"\t\t\t\t\t\t"<<"Opcion Incorrecta....";
+					Sleep(1000);
+				}
+				else
+				{
+					valido = true;
+				}
+			}while(!valido);
+		//-------------------------------------------
+
+		switch(opcion)
+		{
+		case 1 :
+			{
+				MenuAccesoEmpleadores();
+				break;
+			}
+		case 2 :
+			{
+				MenuAccesoEmpleados();
+				break;
+			}
+		case 3 :
+			{
+				AcercaDe();
+				break;
+			}
+		case 4 :
+			{
+				MenuAdministrador();
+				break;
+			}
+		case 0 :
+			{
+				system("cls");
+				cout<<"\n\n\n\n\t\t\t\t"<<"Gracias por usar \"Yo te Contrato\" "<<endl;
+				Sleep(2000);
+				break;
+			}
+
+		}
+
+	}while(opcion != 0);
+
+	
+}
+int main()
+{
+	 
+	FILE *ptr = fopen(arch_us_empleado,"ab");
+	fclose(ptr);
+	ptr = fopen(arch_us_empleador,"ab");
+	fclose(ptr);
+	ptr = fopen(archivo,"ab");
+	fclose(ptr);
+	ptr = fopen(Arch_empleador,"ab");
+	fclose(ptr);
+	ptr = fopen(Arch_empleados,"ab");
+	fclose(ptr);
+	ptr = fopen(Arch_servicio,"ab");
+	fclose(ptr);
+	MenuPrincipal();
+	return 0;
+}
+
+//------------------FIN Programa Principal MAIN-------------------------------
